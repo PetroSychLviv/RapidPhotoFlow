@@ -38,12 +38,15 @@ export function ReviewPanel({ photos }: ReviewPanelProps) {
                 />
                 <div className="gallery-overlay">
                   <div className="flex justify-between align-center">
-                    <span className="gallery-name">{photo.originalName}</span>
                     <span className="pill-loud text-xs">Processed</span>
                   </div>
-                  <div className="gallery-meta">
-                    Completed at{" "}
-                    <span className="text-xs text-muted">{completedAt}</span>
+                  <div>
+                    <div className="gallery-name">{photo.originalName}</div>
+                    <div className="gallery-meta">
+                      <span className="text-xs text-muted">
+                        Completed at {completedAt}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -54,15 +57,17 @@ export function ReviewPanel({ photos }: ReviewPanelProps) {
               <div className="skeleton-surface" />
               <div className="gallery-overlay skeleton-overlay">
                 <div className="flex justify-between align-center">
-                  <span className="gallery-name">{photo.originalName}</span>
                   <span className="pill-loud text-xs">
                     {photo.status === "processing" ? "Processing" : "Queued"}
                   </span>
                 </div>
-                <div className="gallery-meta">
-                  <span className="text-xs text-muted">
-                    Waiting for processing to complete…
-                  </span>
+                <div>
+                  <div className="gallery-name">{photo.originalName}</div>
+                  <div className="gallery-meta">
+                    <span className="text-xs text-muted">
+                      Waiting for processing to complete…
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
