@@ -133,79 +133,86 @@ export function App() {
         </main>
 
         <aside className="app-log">
-          <div className="panel-title">Event Log</div>
-          <div className="panel-subtitle">
-            A running history of queue events and any surfaced errors.
-          </div>
-
-          <div className="log-container">
-            <div className="log-header">
-              <span>Workflow events</span>
-              <button
-                type="button"
-                className="btn btn-ghost btn-small"
-                onClick={() => setLogLines([])}
-              >
-                Clear
-              </button>
-            </div>
-
-            <ul className="log-list scroll-sm">
-              {logLines.length === 0 && (
-                <li className="log-empty">
-                  No events yet — uploads, queue updates, and errors will land
-                  here.
-                </li>
-              )}
-              {logLines.map((line) => (
-                <li key={line} className="log-entry">
-                  <span className="log-message">{line}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="mt-3">
-            <div className="panel-title">Selected Photo Log</div>
-            <div className="panel-subtitle">
-              Inspect lifecycle events for a specific photo.
-            </div>
-
-            <div className="log-container">
-              <div className="log-header">
-                <span>
-                  {selectedForLogs
-                    ? selectedForLogs.originalName
-                    : "Nothing selected"}
-                </span>
-                {selectedForLogs && (
-                  <span className="text-xs text-muted">
-                    id {selectedForLogs.id.slice(0, 8)}…
-                  </span>
-                )}
+          <div className="app-log-scroll">
+            <div>
+              <div className="panel-title">Event Log</div>
+              <div className="panel-subtitle">
+                A running history of queue events and any surfaced errors.
               </div>
 
-              <ul className="log-list scroll-sm">
-                {selectedForLogs == null && (
-                  <li className="log-empty">
-                    Choose &ldquo;View log&rdquo; from the queue to inspect a
-                    photo.
-                  </li>
-                )}
-                {selectedForLogs != null && selectedLogs.length === 0 && (
-                  <li className="log-empty">
-                    This photo hasn&apos;t accumulated any events yet.
-                  </li>
-                )}
-                {selectedLogs.map((entry) => (
-                  <li key={entry.timestamp + entry.message} className="log-entry">
-                    <span className="log-timestamp">
-                      {new Date(entry.timestamp).toLocaleTimeString()}
+              <div className="log-container">
+                <div className="log-header">
+                  <span>Workflow events</span>
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-small"
+                    onClick={() => setLogLines([])}
+                  >
+                    Clear
+                  </button>
+                </div>
+
+                <ul className="log-list scroll-sm">
+                  {logLines.length === 0 && (
+                    <li className="log-empty">
+                      No events yet — uploads, queue updates, and errors will
+                      land here.
+                    </li>
+                  )}
+                  {logLines.map((line) => (
+                    <li key={line} className="log-entry">
+                      <span className="log-message">{line}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-3">
+              <div className="panel-title">Selected Photo Log</div>
+              <div className="panel-subtitle">
+                Inspect lifecycle events for a specific photo.
+              </div>
+
+              <div className="log-container">
+                <div className="log-header">
+                  <span>
+                    {selectedForLogs
+                      ? selectedForLogs.originalName
+                      : "Nothing selected"}
+                  </span>
+                  {selectedForLogs && (
+                    <span className="text-xs text-muted">
+                      id {selectedForLogs.id.slice(0, 8)}…
                     </span>
-                    <span className="log-message">{entry.message}</span>
-                  </li>
-                ))}
-              </ul>
+                  )}
+                </div>
+
+                <ul className="log-list scroll-sm">
+                  {selectedForLogs == null && (
+                    <li className="log-empty">
+                      Choose &ldquo;View log&rdquo; from the queue to inspect a
+                      photo.
+                    </li>
+                  )}
+                  {selectedForLogs != null && selectedLogs.length === 0 && (
+                    <li className="log-empty">
+                      This photo hasn&apos;t accumulated any events yet.
+                    </li>
+                  )}
+                  {selectedLogs.map((entry) => (
+                    <li
+                      key={entry.timestamp + entry.message}
+                      className="log-entry"
+                    >
+                      <span className="log-timestamp">
+                        {new Date(entry.timestamp).toLocaleTimeString()}
+                      </span>
+                      <span className="log-message">{entry.message}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </aside>
