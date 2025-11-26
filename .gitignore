@@ -6,6 +6,9 @@ pnpm-lock.yaml
 # Backend uploads (raw files)
 backend/uploads/
 
+# Backend data files
+backend/data/photos.json
+
 # Backend build output
 backend/dist/
 
