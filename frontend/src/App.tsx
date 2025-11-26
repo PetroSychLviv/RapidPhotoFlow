@@ -118,6 +118,7 @@ export function App() {
             <UploadPanel
               onUploaded={handleUploaded}
               onLogMessage={pushLogLine}
+              onGoToQueue={() => setActiveTab("queue")}
             />
           )}
           {activeTab === "queue" && (

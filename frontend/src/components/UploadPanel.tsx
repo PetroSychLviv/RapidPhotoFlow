@@ -5,9 +5,14 @@ import type { Photo } from "../types";
 interface UploadPanelProps {
   onUploaded: (photos: Photo[]) => void;
   onLogMessage: (message: string) => void;
+  onGoToQueue: () => void;
 }
 
-export function UploadPanel({ onUploaded, onLogMessage }: UploadPanelProps) {
+export function UploadPanel({
+  onUploaded,
+  onLogMessage,
+  onGoToQueue,
+}: UploadPanelProps) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -30,6 +35,7 @@ export function UploadPanel({ onUploaded, onLogMessage }: UploadPanelProps) {
       onLogMessage(
         `Queued ${created.length} photo${created.length === 1 ? "" : "s"}`
       );
+      onGoToQueue();
       setSelectedFiles([]);
       if (inputRef.current) {
         inputRef.current.value = "";
