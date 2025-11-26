@@ -10,6 +10,7 @@ import {
   createPhoto,
   appendLogEntry,
 } from "../data/photoStore";
+import { broadcastEvent } from "../services/eventStream";
 
 const uploadsDir = path.join(__dirname, "..", "..", "uploads");
 if (!fs.existsSync(uploadsDir)) {
@@ -56,6 +57,12 @@ photosRouter.post(
         await appendLogEntry(photo.id, {
           timestamp: new Date().toISOString(),
           message: "Photo uploaded",
+        });
+
+        broadcastEvent({
+          type: "photo-created",
+          photoId: photo.id,
+          status: photo.status,
         });
 
         created.push(photo);

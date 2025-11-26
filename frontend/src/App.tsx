@@ -1,9 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import type { Photo } from "./types";
 import { UploadPanel } from "./components/UploadPanel";
 import { QueuePanel } from "./components/QueuePanel";
 import { ReviewPanel } from "./components/ReviewPanel";
+import { API_BASE, getPhotos } from "./api/client";
 
 type TabKey = "upload" | "queue" | "review";
 
@@ -37,6 +38,48 @@ export function App() {
     [selectedForLogs]
   );
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function refreshFromServer() {
+      try {
+        const data = await getPhotos();
+        if (!cancelled) {
+          handlePhotosChange(data);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          const message =
+            error instanceof Error
+              ? error.message
+              : "Failed to refresh photos from server";
+          pushLogLine(`Realtime sync error: ${message}`);
+        }
+      }
+    }
+
+    // Initial load on mount
+    refreshFromServer();
+
+    const source = new EventSource(`${API_BASE}/events`);
+    source.onmessage = () => {
+      // Whenever backend sends an event (upload or status change),
+      // refresh the photo list so Review tab stays up to date.
+      refreshFromServer();
+    };
+    source.onerror = () => {
+      if (!cancelled) {
+        pushLogLine("Realtime channel disconnected.");
+      }
+    };
+
+    return () => {
+      cancelled = true;
+      source.close();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="app-shell">
       <header className="app-header">
@@ -51,19 +94,19 @@ export function App() {
           <nav className="app-tabs">
             <TabButton
               label="Upload"
-              sub="Add photos"
+              sub=""
               isActive={activeTab === "upload"}
               onClick={() => setActiveTab("upload")}
             />
             <TabButton
               label="Queue"
-              sub="Live status"
+              sub=""
               isActive={activeTab === "queue"}
               onClick={() => setActiveTab("queue")}
             />
             <TabButton
-              label="Review"
-              sub="Ready media"
+              label="Preview"
+              sub=""
               isActive={activeTab === "review"}
               onClick={() => setActiveTab("review")}
             />

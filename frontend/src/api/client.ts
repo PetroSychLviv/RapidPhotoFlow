@@ -1,6 +1,6 @@
 import type { Photo } from "../types";
 
-const API_BASE = "http://localhost:4000";
+export const API_BASE = "http://localhost:4000";
 
 export async function uploadPhotos(files: File[]): Promise<Photo[]> {
   const formData = new FormData();

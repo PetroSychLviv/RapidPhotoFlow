@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import path from "path";
 import { photosRouter } from "./routes/photos";
+import { eventsRouter } from "./routes/events";
 import { tickProcessing } from "./services/processingService";
 
 const app = express();
@@ -16,6 +17,7 @@ app.use("/uploads", express.static(uploadsPath));
 
 // API routes
 app.use("/api/photos", photosRouter);
+app.use("/events", eventsRouter);
 
 app.get("/health", (_req: Request, res: Response) => {
   res.json({ status: "ok" });

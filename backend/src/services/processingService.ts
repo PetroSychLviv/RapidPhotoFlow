@@ -1,5 +1,6 @@
 import { appendLogEntry, getAllPhotos, updatePhoto } from "../data/photoStore";
 import { Photo } from "../types";
+import { broadcastEvent } from "./eventStream";
 
 interface ProcessingState {
   [photoId: string]: {
@@ -36,7 +37,9 @@ export async function tickProcessing(): Promise<void> {
       const isSuccess = Math.random() < 0.8;
       const newStatus = isSuccess ? "processed" : "failed";
 
-      await updatePhoto(processingPhoto.id, { status: newStatus });
+      const updated = await updatePhoto(processingPhoto.id, {
+        status: newStatus,
+      });
       await appendLogEntry(processingPhoto.id, {
         timestamp: now(),
         message:
@@ -44,6 +47,14 @@ export async function tickProcessing(): Promise<void> {
             ? "Processing succeeded"
             : "Processing failed",
       });
+
+      if (updated) {
+        broadcastEvent({
+          type: "photo-updated",
+          photoId: updated.id,
+          status: updated.status,
+        });
+      }
 
       delete state[processingPhoto.id];
       return;
@@ -59,13 +70,21 @@ export async function tickProcessing(): Promise<void> {
     return;
   }
 
-  await updatePhoto(next.id, { status: "processing" });
+  const updated = await updatePhoto(next.id, { status: "processing" });
   state[next.id] = { startedAt: now() };
 
   await appendLogEntry(next.id, {
     timestamp: now(),
     message: "Moved to processing",
   });
+
+  if (updated) {
+    broadcastEvent({
+      type: "photo-updated",
+      photoId: updated.id,
+      status: updated.status,
+    });
+  }
 }
 
 
