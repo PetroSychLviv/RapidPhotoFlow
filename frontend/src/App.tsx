@@ -94,19 +94,16 @@ export function App() {
           <nav className="app-tabs">
             <TabButton
               label="Upload"
-              sub=""
               isActive={activeTab === "upload"}
               onClick={() => setActiveTab("upload")}
             />
             <TabButton
               label="Queue"
-              sub=""
               isActive={activeTab === "queue"}
               onClick={() => setActiveTab("queue")}
             />
             <TabButton
               label="Preview"
-              sub=""
               isActive={activeTab === "review"}
               onClick={() => setActiveTab("review")}
             />
@@ -218,12 +215,11 @@ export function App() {
 
 interface TabButtonProps {
   label: string;
-  sub: string;
   isActive: boolean;
   onClick: () => void;
 }
 
-function TabButton({ label, sub, isActive, onClick }: TabButtonProps) {
+function TabButton({ label, isActive, onClick }: TabButtonProps) {
   return (
     <button
       type="button"
@@ -231,7 +227,6 @@ function TabButton({ label, sub, isActive, onClick }: TabButtonProps) {
       onClick={onClick}
     >
       <span>{label}</span>
-      <span>{sub}</span>
     </button>
   );
 }
