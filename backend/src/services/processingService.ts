@@ -1,6 +1,7 @@
+import { Injectable, OnModuleInit } from "@nestjs/common";
 import { appendLogEntry, getAllPhotos, updatePhoto } from "../data/photoStore";
 import { Photo } from "../types";
-import { broadcastEvent } from "./eventStream";
+import { EventStreamService } from "./eventStream";
 
 interface ProcessingState {
   [photoId: string]: {
@@ -9,82 +10,102 @@ interface ProcessingState {
 }
 
 const PROCESSING_DURATION_MS = 5000;
-const state: ProcessingState = {};
 
-function now(): string {
-  return new Date().toISOString();
-}
+@Injectable()
+export class ProcessingService implements OnModuleInit {
+  private readonly state: ProcessingState = {};
 
-async function pickNextUploaded(photos: Photo[]): Promise<Photo | undefined> {
-  return photos.find((p) => p.status === "uploaded");
-}
+  constructor(private readonly events: EventStreamService) {}
 
-async function findProcessing(photos: Photo[]): Promise<Photo | undefined> {
-  return photos.find((p) => p.status === "processing");
-}
-
-export async function tickProcessing(): Promise<void> {
-  const photos = await getAllPhotos();
-
-  // Complete processing if any photo has been processing long enough
-  const processingPhoto = await findProcessing(photos);
-  if (processingPhoto) {
-    const tracking = state[processingPhoto.id];
-    const startedAt = tracking ? new Date(tracking.startedAt).getTime() : 0;
-    const elapsed = Date.now() - startedAt;
-
-    if (!tracking || elapsed >= PROCESSING_DURATION_MS) {
-      const isSuccess = Math.random() < 0.8;
-      const newStatus = isSuccess ? "processed" : "failed";
-
-      const updated = await updatePhoto(processingPhoto.id, {
-        status: newStatus,
+  onModuleInit(): void {
+    setInterval(() => {
+      this.tick().catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error("Error in processing tick", err);
       });
-      await appendLogEntry(processingPhoto.id, {
-        timestamp: now(),
-        message:
-          newStatus === "processed"
-            ? "Processing succeeded"
-            : "Processing failed",
-      });
+    }, 2000);
+  }
 
-      if (updated) {
-        broadcastEvent({
-          type: "photo-updated",
-          photoId: updated.id,
-          status: updated.status,
+  private now(): string {
+    return new Date().toISOString();
+  }
+
+  private async pickNextUploaded(
+    photos: Photo[]
+  ): Promise<Photo | undefined> {
+    return photos.find((p) => p.status === "uploaded");
+  }
+
+  private async findProcessing(photos: Photo[]): Promise<Photo | undefined> {
+    return photos.find((p) => p.status === "processing");
+  }
+
+  private getState(photoId: string): { startedAt: string } | undefined {
+    return this.state[photoId];
+  }
+
+  async tick(): Promise<void> {
+    const photos = await getAllPhotos();
+
+    // Complete processing if any photo has been processing long enough
+    const processingPhoto = await this.findProcessing(photos);
+    if (processingPhoto) {
+      const tracking = this.getState(processingPhoto.id);
+      const startedAt = tracking ? new Date(tracking.startedAt).getTime() : 0;
+      const elapsed = Date.now() - startedAt;
+
+      if (!tracking || elapsed >= PROCESSING_DURATION_MS) {
+        const isSuccess = Math.random() < 0.8;
+        const newStatus = isSuccess ? "processed" : "failed";
+
+        const updated = await updatePhoto(processingPhoto.id, {
+          status: newStatus,
         });
+        await appendLogEntry(processingPhoto.id, {
+          timestamp: this.now(),
+          message:
+            newStatus === "processed"
+              ? "Processing succeeded"
+              : "Processing failed",
+        });
+
+        if (updated) {
+          this.events.emit({
+            type: "photo-updated",
+            photoId: updated.id,
+            status: updated.status,
+          });
+        }
+
+        delete this.state[processingPhoto.id];
+        return;
       }
 
-      delete state[processingPhoto.id];
+      // If still processing, nothing else to do this tick
       return;
     }
 
-    // If still processing, nothing else to do this tick
-    return;
-  }
+    // If nothing is currently processing, pick the next uploaded photo
+    const next = await this.pickNextUploaded(photos);
+    if (!next) {
+      return;
+    }
 
-  // If nothing is currently processing, pick the next uploaded photo
-  const next = await pickNextUploaded(photos);
-  if (!next) {
-    return;
-  }
+    const updated = await updatePhoto(next.id, { status: "processing" });
+    this.state[next.id] = { startedAt: this.now() };
 
-  const updated = await updatePhoto(next.id, { status: "processing" });
-  state[next.id] = { startedAt: now() };
-
-  await appendLogEntry(next.id, {
-    timestamp: now(),
-    message: "Moved to processing",
-  });
-
-  if (updated) {
-    broadcastEvent({
-      type: "photo-updated",
-      photoId: updated.id,
-      status: updated.status,
+    await appendLogEntry(next.id, {
+      timestamp: this.now(),
+      message: "Moved to processing",
     });
+
+    if (updated) {
+      this.events.emit({
+        type: "photo-updated",
+        photoId: updated.id,
+        status: updated.status,
+      });
+    }
   }
 }
-
 

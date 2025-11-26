@@ -1,7 +1,8 @@
-import type { Response } from "express";
+import { Injectable } from "@nestjs/common";
 import type { PhotoStatus } from "../types";
+import { Observable, Subject } from "rxjs";
 
-type EventPayload =
+export type EventPayload =
   | {
       type: "photo-created";
       photoId: string;
@@ -13,22 +14,20 @@ type EventPayload =
       status: PhotoStatus;
     };
 
-const clients = new Set<Response>();
-
-export function addEventClient(res: Response): void {
-  clients.add(res);
-
-  // Remove client on disconnect
-  res.on("close", () => {
-    clients.delete(res);
-  });
+export interface MessageEvent {
+  data: EventPayload;
 }
 
-export function broadcastEvent(event: EventPayload): void {
-  const data = `data: ${JSON.stringify(event)}\n\n`;
-  for (const client of clients) {
-    client.write(data);
+@Injectable()
+export class EventStreamService {
+  private readonly subject = new Subject<MessageEvent>();
+
+  get stream$(): Observable<MessageEvent> {
+    return this.subject.asObservable();
+  }
+
+  emit(event: EventPayload): void {
+    this.subject.next({ data: event });
   }
 }
-
 
