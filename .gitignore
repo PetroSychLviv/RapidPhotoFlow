@@ -1,0 +1,15 @@
+node_modules
+npm-debug.log*
+pnpm-lock.yaml
+*.log
+
+# Backend uploads (raw files)
+backend/uploads/
+
+# Backend build output
+backend/dist/
+
+# Frontend build output
+frontend/dist/
+
+
