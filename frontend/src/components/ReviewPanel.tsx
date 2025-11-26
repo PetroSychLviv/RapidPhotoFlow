@@ -38,7 +38,9 @@ export function ReviewPanel({ photos }: ReviewPanelProps) {
                 />
                 <div className="gallery-overlay">
                   <div className="flex justify-between align-center">
-                    <span className="pill-loud text-xs">Processed</span>
+                    <span className="pill-loud pill-loud-processed text-xs">
+                      Processed
+                    </span>
                   </div>
                   <div>
                     <div className="gallery-name">{photo.originalName}</div>
@@ -57,7 +59,7 @@ export function ReviewPanel({ photos }: ReviewPanelProps) {
               <div className="skeleton-surface" />
               <div className="gallery-overlay skeleton-overlay">
                 <div className="flex justify-between align-center">
-                  <span className="pill-loud text-xs">
+                  <span className="pill-loud pill-loud-muted text-xs">
                     {photo.status === "processing" ? "Processing" : "Queued"}
                   </span>
                 </div>
