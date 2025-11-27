@@ -5,7 +5,13 @@ import type { Photo } from "./types";
 import { UploadPanel } from "./components/UploadPanel";
 import { QueuePanel } from "./components/QueuePanel";
 import { ReviewPanel } from "./components/ReviewPanel";
-import { API_BASE, getPhotos } from "./api/client";
+import {
+  API_BASE,
+  appendLog,
+  clearLogs,
+  getLogs,
+  getPhotos,
+} from "./api/client";
 
 type TabKey = "upload" | "queue" | "review";
 const TAB_STORAGE_KEY = "rapidPhotoFlow.activeTab";
@@ -34,11 +40,20 @@ export function App() {
     }
   }
 
-  function pushLogLine(line: string) {
-    setLogLines((prev) => [
-      `[${new Date().toLocaleTimeString()}] ${line}`,
-      ...prev,
-    ]);
+  function pushLogLine(message: string) {
+    const line = `[${new Date().toLocaleTimeString()}] ${message}`;
+    setLogLines((prev) => [line, ...prev]);
+
+    // Persist to backend store (fire-and-forget)
+    if (typeof window !== "undefined") {
+      void (async () => {
+        try {
+          await appendLog(line);
+        } catch {
+          // Ignore log persistence failures for now
+        }
+      })();
+    }
   }
 
   const selectedLogs = useMemo(
@@ -71,8 +86,20 @@ export function App() {
       }
     }
 
+    async function loadLogsFromServer() {
+      try {
+        const data = await getLogs();
+        if (!cancelled) {
+          setLogLines(data);
+        }
+      } catch {
+        // If logs can't be loaded, just start from empty in the UI
+      }
+    }
+
     // Initial load on mount
     refreshFromServer();
+    loadLogsFromServer();
 
     const source = new EventSource(`${API_BASE}/events`);
     source.onmessage = () => {
@@ -159,7 +186,14 @@ export function App() {
                   <button
                     type="button"
                     className="btn btn-ghost btn-small"
-                    onClick={() => setLogLines([])}
+                    onClick={async () => {
+                      setLogLines([]);
+                      try {
+                        await clearLogs();
+                      } catch {
+                        // Ignore log clear failures for now
+                      }
+                    }}
                   >
                     Clear
                   </button>
