@@ -285,6 +285,17 @@ body {
   gap: 0.75rem;
 }
 
+.upload-panel-expanded {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.upload-panel-expanded .upload-zone {
+  flex: 1;
+  min-height: 0;
+}
+
 .upload-zone:hover {
   border-color: rgba(129, 140, 248, 0.9);
   background: radial-gradient(circle at top left, #111827, #020617);
@@ -407,6 +418,12 @@ body {
   overflow-y: auto;
 }
 
+.upload-panel-expanded .file-list {
+  flex: 1;
+  min-height: 0;
+  max-height: none; /* allow the list to grow with panel height */
+}
+
 .file-list-header {
   display: flex;
   padding: 0.25rem 0;
@@ -416,6 +433,10 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #6b7280;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: rgba(2, 6, 23, 0.98); /* subtle solid so text stays legible over rows */
 }
 
 .file-col-name {

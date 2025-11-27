@@ -86,8 +86,16 @@ export function UploadPanel({
   const totalSizeMb =
     selectedFiles.reduce((sum, f) => sum + f.size, 0) / (1024 * 1024);
 
+  const fileCount = selectedFiles.length;
+  const rowHeight = 36; // approximate row height in px
+  const minListHeight = 64;
+  const maxListHeight = Math.min(
+    minListHeight + fileCount * rowHeight,
+    260 // cap so panel doesn't dominate the column
+  );
+
   return (
-    <div>
+    <div className="upload-panel">
       <div className="panel-title">Upload Photos</div>
       <div className="panel-subtitle">
         Drop multiple photos, queue them, and let RapidPhotoFlow simulate the
@@ -149,8 +157,11 @@ export function UploadPanel({
           </span>
         </div>
 
-        {selectedFiles.length > 0 && (
-          <div className="file-list scroll-sm">
+        {fileCount > 0 && (
+          <div
+            className="file-list scroll-sm"
+            style={{ maxHeight: `${maxListHeight}px` }}
+          >
             <div className="file-list-header">
               <span className="file-col file-col-name">File</span>
               <span className="file-col file-col-size">Size</span>
