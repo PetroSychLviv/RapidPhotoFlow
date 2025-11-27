@@ -160,7 +160,6 @@ export function UploadPanel({
               JPEGs, PNGs, HEIC — we&apos;ll simulate cloud processing.
             </div>
           </div>
-          <div className="pill">Parallel uploads</div>
         </div>
 
         <div className="upload-actions">
