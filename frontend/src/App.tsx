@@ -8,9 +8,16 @@ import { ReviewPanel } from "./components/ReviewPanel";
 import { API_BASE, getPhotos } from "./api/client";
 
 type TabKey = "upload" | "queue" | "review";
+const TAB_STORAGE_KEY = "rapidPhotoFlow.activeTab";
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<TabKey>("upload");
+  const [activeTab, setActiveTab] = useState<TabKey>(() => {
+    if (typeof window === "undefined") return "upload";
+    const stored = window.localStorage.getItem(TAB_STORAGE_KEY);
+    return stored === "upload" || stored === "queue" || stored === "review"
+      ? stored
+      : "upload";
+  });
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [selectedForLogs, setSelectedForLogs] = useState<Photo | null>(null);
   const [logLines, setLogLines] = useState<string[]>([]);
@@ -38,6 +45,11 @@ export function App() {
     () => selectedForLogs?.log ?? [],
     [selectedForLogs]
   );
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(TAB_STORAGE_KEY, activeTab);
+  }, [activeTab]);
 
   useEffect(() => {
     let cancelled = false;
