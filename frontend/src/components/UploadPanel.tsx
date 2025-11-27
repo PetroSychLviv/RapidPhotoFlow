@@ -57,13 +57,13 @@ export function UploadPanel({
   async function handleUpload() {
     if (!selectedFiles.length) return;
     setIsUploading(true);
+    onGoToQueue();
     try {
       const created = await uploadPhotos(selectedFiles);
       onUploaded(created);
       onLogMessage(
         `Queued ${created.length} photo${created.length === 1 ? "" : "s"}`
       );
-      onGoToQueue();
       setSelectedFiles([]);
       if (inputRef.current) {
         inputRef.current.value = "";
