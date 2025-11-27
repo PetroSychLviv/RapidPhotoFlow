@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
+import "react-image-gallery/styles/css/image-gallery.css";
 import type { Photo } from "./types";
 import { UploadPanel } from "./components/UploadPanel";
 import { QueuePanel } from "./components/QueuePanel";
@@ -168,52 +169,54 @@ export function App() {
               </div>
             </div>
 
-            <div className="mt-3">
-              <div className="panel-title">Selected Photo Log</div>
-              <div className="panel-subtitle">
-                Inspect lifecycle events for a specific photo.
-              </div>
-
-              <div className="log-container">
-                <div className="log-header">
-                  <span>
-                    {selectedForLogs
-                      ? selectedForLogs.originalName
-                      : "Nothing selected"}
-                  </span>
-                  {selectedForLogs && (
-                    <span className="text-xs text-muted">
-                      id {selectedForLogs.id.slice(0, 8)}…
-                    </span>
-                  )}
+            {activeTab === "queue" && (
+              <div className="mt-3">
+                <div className="panel-title">Selected Photo Log</div>
+                <div className="panel-subtitle">
+                  Inspect lifecycle events for a specific photo.
                 </div>
 
-                <ul className="log-list scroll-sm">
-                  {selectedForLogs == null && (
-                    <li className="log-empty">
-                      Choose &ldquo;View log&rdquo; from the queue to inspect a
-                      photo.
-                    </li>
-                  )}
-                  {selectedForLogs != null && selectedLogs.length === 0 && (
-                    <li className="log-empty">
-                      This photo hasn&apos;t accumulated any events yet.
-                    </li>
-                  )}
-                  {selectedLogs.map((entry) => (
-                    <li
-                      key={entry.timestamp + entry.message}
-                      className="log-entry"
-                    >
-                      <span className="log-timestamp">
-                        {new Date(entry.timestamp).toLocaleTimeString()}
+                <div className="log-container">
+                  <div className="log-header">
+                    <span>
+                      {selectedForLogs
+                        ? selectedForLogs.originalName
+                        : "Nothing selected"}
+                    </span>
+                    {selectedForLogs && (
+                      <span className="text-xs text-muted">
+                        id {selectedForLogs.id.slice(0, 8)}…
                       </span>
-                      <span className="log-message">{entry.message}</span>
-                    </li>
-                  ))}
-                </ul>
+                    )}
+                  </div>
+
+                  <ul className="log-list scroll-sm">
+                    {selectedForLogs == null && (
+                      <li className="log-empty">
+                        Choose &ldquo;View log&rdquo; from the queue to inspect
+                        a photo.
+                      </li>
+                    )}
+                    {selectedForLogs != null && selectedLogs.length === 0 && (
+                      <li className="log-empty">
+                        This photo hasn&apos;t accumulated any events yet.
+                      </li>
+                    )}
+                    {selectedLogs.map((entry) => (
+                      <li
+                        key={entry.timestamp + entry.message}
+                        className="log-entry"
+                      >
+                        <span className="log-timestamp">
+                          {new Date(entry.timestamp).toLocaleTimeString()}
+                        </span>
+                        <span className="log-message">{entry.message}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </aside>
       </div>

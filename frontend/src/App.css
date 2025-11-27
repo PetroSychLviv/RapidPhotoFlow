@@ -653,8 +653,8 @@ body {
 }
 
 .gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.9rem;
 }
 
@@ -666,6 +666,9 @@ body {
   border: 1px solid rgba(31, 41, 55, 0.9);
   cursor: pointer;
   min-height: 120px;
+  width: 180px;       /* keep a consistent card width */
+  max-width: 100%;    /* prevent overflow on very small screens */
+  flex: 0 0 auto;     /* prevent stretching when there are few cards */
 }
 
 .skeleton-card {
@@ -730,6 +733,107 @@ body {
 .gallery-meta {
   font-size: 0.7rem;
   color: #9ca3af;
+}
+
+.lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.lightbox-dialog {
+  background: #020617;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(31, 41, 55, 0.9);
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.9);
+  width: min(960px, 90vw);
+  max-height: min(640px, 90vh);
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.lightbox-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lightbox-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.lightbox-body {
+  flex: 1;
+  min-height: 0;
+}
+
+.lightbox-body .image-gallery {
+  height: 100%;
+}
+
+.lightbox-body .image-gallery-slide img {
+  max-height: 420px;
+  object-fit: contain;
+  border-radius: 0.9rem;
+}
+
+.lightbox-body .image-gallery-slides {
+  border-radius: 0.9rem;
+  overflow: hidden;
+}
+
+.lightbox-body .image-gallery-index {
+  border-radius: 0 0.9rem;
+}
+
+.lightbox-body .image-gallery-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.lightbox-body .image-gallery-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.lightbox-body .image-gallery-slide .image-gallery-description {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    rgba(15, 23, 42, 0.95),
+    rgba(15, 23, 42, 0.6),
+    transparent
+  );
+  padding: 0.4rem 0.6rem;
+  margin: 0;
+  font-size: 0.8rem;
+  color: #e5e7eb;
+  text-align: left;
+}
+
+.lightbox-body .image-gallery-thumbnails-container {
+  padding-top: 0.5rem;
+}
+
+.lightbox-body .image-gallery-thumbnail,
+.lightbox-body .image-gallery-thumbnail-inner {
+  border-radius: 0.6rem;
+  overflow: hidden;
+}
+
+.lightbox-body .image-gallery-thumbnail img {
+  border-radius: 0.6rem;
 }
 
 .pill-loud {
