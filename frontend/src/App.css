@@ -292,6 +292,13 @@ body {
   background: radial-gradient(circle at top left, #111827, #020617);
 }
 
+.upload-zone-dragover {
+  border-color: rgba(129, 140, 248, 0.95);
+  background: radial-gradient(circle at top left, #111827, #020617);
+  box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.6),
+    0 18px 40px rgba(15, 23, 42, 0.9);
+}
+
 .upload-zone-header {
   display: flex;
   align-items: center;

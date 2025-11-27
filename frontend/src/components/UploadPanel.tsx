@@ -16,6 +16,7 @@ export function UploadPanel({
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
@@ -24,6 +25,33 @@ export function UploadPanel({
 
   function openFilePicker() {
     inputRef.current?.click();
+  }
+
+  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const droppedFiles = Array.from(e.dataTransfer.files ?? []).filter((file) =>
+      file.type.startsWith("image/")
+    );
+
+    if (!droppedFiles.length) return;
+    setSelectedFiles(droppedFiles);
+  }
+
+  function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isDragging) {
+      setIsDragging(true);
+    }
+  }
+
+  function handleDragLeave(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
   }
 
   async function handleUpload() {
@@ -62,7 +90,14 @@ export function UploadPanel({
         processing pipeline.
       </div>
 
-      <div className="upload-zone scroll-sm">
+      <div
+        className={`upload-zone scroll-sm${
+          isDragging ? " upload-zone-dragover" : ""
+        }`}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+      >
         <input
           ref={inputRef}
           type="file"
