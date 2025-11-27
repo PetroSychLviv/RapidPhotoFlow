@@ -125,6 +125,14 @@ body {
   padding: 1.5rem 1.75rem 1.75rem;
 }
 
+.tab-panel {
+  height: 100%;
+}
+
+.tab-panel-fade {
+  animation: tabFadeIn 220ms ease-out;
+}
+
 .app-log {
   padding: 1.5rem 1.5rem 1.6rem;
   border-left: 1px solid rgba(31, 41, 55, 0.9);
@@ -878,6 +886,17 @@ body {
   border: 1px solid #4ade80; /* brighter green border */
   color: #bbf7d0; /* same bright text */
   box-shadow: 0 0 12px rgba(74, 222, 128, 0.6); /* subtle glow to make it pop */
+}
+
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes shimmer {

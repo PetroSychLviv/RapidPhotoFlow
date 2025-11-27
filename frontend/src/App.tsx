@@ -166,22 +166,24 @@ export function App() {
 
       <div className="app-body">
         <main className="app-main">
-          {activeTab === "upload" && (
-            <UploadPanel
-              onUploaded={handleUploaded}
-              onLogMessage={pushLogLine}
-              onGoToQueue={() => setActiveTab("queue")}
-            />
-          )}
-          {activeTab === "queue" && (
-            <QueuePanel
-              photos={photos}
-              onPhotosChange={handlePhotosChange}
-              onSelectPhotoLogs={setSelectedForLogs}
-              onLogMessage={pushLogLine}
-            />
-          )}
-          {activeTab === "review" && <ReviewPanel photos={photos} />}
+          <div key={activeTab} className="tab-panel tab-panel-fade">
+            {activeTab === "upload" && (
+              <UploadPanel
+                onUploaded={handleUploaded}
+                onLogMessage={pushLogLine}
+                onGoToQueue={() => setActiveTab("queue")}
+              />
+            )}
+            {activeTab === "queue" && (
+              <QueuePanel
+                photos={photos}
+                onPhotosChange={handlePhotosChange}
+                onSelectPhotoLogs={setSelectedForLogs}
+                onLogMessage={pushLogLine}
+              />
+            )}
+            {activeTab === "review" && <ReviewPanel photos={photos} />}
+          </div>
         </main>
 
         <aside className="app-log">
