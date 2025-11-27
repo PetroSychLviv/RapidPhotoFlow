@@ -54,6 +54,10 @@ export function UploadPanel({
     setIsDragging(false);
   }
 
+  function handleRemoveFile(index: number) {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+  }
+
   async function handleUpload() {
     if (!selectedFiles.length) return;
     setIsUploading(true);
@@ -147,12 +151,25 @@ export function UploadPanel({
 
         {selectedFiles.length > 0 && (
           <div className="file-list scroll-sm">
-            {selectedFiles.map((file) => (
+            <div className="file-list-header">
+              <span className="file-col file-col-name">File</span>
+              <span className="file-col file-col-size">Size</span>
+              <span className="file-col file-col-actions">Actions</span>
+            </div>
+
+            {selectedFiles.map((file, index) => (
               <div key={file.name + file.lastModified} className="file-item">
-                <span className="file-name">{file.name}</span>
-                <span className="file-size">
+                <span className="file-name file-col-name">{file.name}</span>
+                <span className="file-size file-col-size">
                   {(file.size / (1024 * 1024)).toFixed(2)} MB
                 </span>
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-small file-col-actions"
+                  onClick={() => handleRemoveFile(index)}
+                >
+                  Remove
+                </button>
               </div>
             ))}
           </div>

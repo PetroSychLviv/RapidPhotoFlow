@@ -407,9 +407,39 @@ body {
   overflow-y: auto;
 }
 
+.file-list-header {
+  display: flex;
+  padding: 0.25rem 0;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid rgba(31, 41, 55, 0.9);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6b7280;
+}
+
+.file-col-name {
+  flex: 0 0 calc(100% - 210px); /* give filename ~50px more space */
+  min-width: 0;
+  max-width: calc(100% - 210px);
+}
+
+.file-col-size {
+  width: 80px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.file-col-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
 .file-item {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   gap: 0.75rem;
   padding: 0.3rem 0;
 }
