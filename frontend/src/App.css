@@ -410,6 +410,77 @@ body {
   color: #e5e7eb;
 }
 
+.upload-preview-section {
+  margin-top: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.upload-preview-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.upload-preview-title {
+  font-weight: 500;
+  color: #e5e7eb;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+}
+
+.upload-preview-subtitle {
+  font-size: 0.72rem;
+}
+
+.upload-preview-grid {
+  /* reuse gallery layout but keep cards a bit more compact */
+}
+
+.upload-preview-card {
+  min-height: 90px;
+}
+
+.upload-preview-img {
+  /* inherit gallery-img sizing; no extra rules needed for now */
+}
+
+.upload-preview-remove {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.45rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  padding: 0;
+  box-sizing: border-box;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.9);
+  background: rgba(15, 23, 42, 0.9);
+  color: #e5e7eb;
+  font-size: 0.75rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.9);
+  opacity: 0.9;
+  transition: background 0.15s ease-out, transform 0.12s ease-out,
+    opacity 0.12s ease-out;
+}
+
+.upload-preview-remove:hover {
+  background: rgba(31, 41, 55, 0.98);
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
 .file-list {
   margin-top: 0.75rem;
   font-size: 0.78rem;

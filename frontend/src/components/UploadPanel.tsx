@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { uploadPhotos } from "../api/client";
 import type { Photo } from "../types";
 
@@ -17,6 +17,7 @@ export function UploadPanel({
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
@@ -53,6 +54,20 @@ export function UploadPanel({
     e.stopPropagation();
     setIsDragging(false);
   }
+
+  useEffect(() => {
+    if (!selectedFiles.length) {
+      setPreviewUrls([]);
+      return;
+    }
+
+    const urls = selectedFiles.map((file) => URL.createObjectURL(file));
+    setPreviewUrls(urls);
+
+    return () => {
+      urls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [selectedFiles]);
 
   function handleRemoveFile(index: number) {
     setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
@@ -158,32 +173,73 @@ export function UploadPanel({
         </div>
 
         {fileCount > 0 && (
-          <div
-            className="file-list scroll-sm"
-            style={{ maxHeight: `${maxListHeight}px` }}
-          >
-            <div className="file-list-header">
-              <span className="file-col file-col-name">File</span>
-              <span className="file-col file-col-size">Size</span>
-              <span className="file-col file-col-actions">Actions</span>
+          <>
+            <div
+              className="file-list scroll-sm"
+              style={{ maxHeight: `${maxListHeight}px` }}
+            >
+              <div className="file-list-header">
+                <span className="file-col file-col-name">File</span>
+                <span className="file-col file-col-size">Size</span>
+                <span className="file-col file-col-actions">Actions</span>
+              </div>
+
+              {selectedFiles.map((file, index) => (
+                <div key={file.name + file.lastModified} className="file-item">
+                  <span className="file-name file-col-name">{file.name}</span>
+                  <span className="file-size file-col-size">
+                    {(file.size / (1024 * 1024)).toFixed(2)} MB
+                  </span>
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-small file-col-actions"
+                    onClick={() => handleRemoveFile(index)}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
             </div>
 
-            {selectedFiles.map((file, index) => (
-              <div key={file.name + file.lastModified} className="file-item">
-                <span className="file-name file-col-name">{file.name}</span>
-                <span className="file-size file-col-size">
-                  {(file.size / (1024 * 1024)).toFixed(2)} MB
-                </span>
-                <button
-                  type="button"
-                  className="btn btn-ghost btn-small file-col-actions"
-                  onClick={() => handleRemoveFile(index)}
-                >
-                  Remove
-                </button>
+            {previewUrls.length > 0 && (
+              <div className="upload-preview-section">
+                <div className="upload-preview-header">
+                  <span className="upload-preview-title">Preview</span>
+                  <span className="upload-preview-subtitle">
+                    Local thumbnails before upload —{" "}
+                    <strong>not yet in the queue</strong>.
+                  </span>
+                </div>
+
+                <div className="gallery-grid upload-preview-grid">
+                  {previewUrls.map((url, index) => {
+                    const file = selectedFiles[index];
+                    if (!file) return null;
+                    return (
+                      <div
+                        key={file.name + file.lastModified}
+                        className="gallery-card upload-preview-card"
+                      >
+                        <button
+                          type="button"
+                          className="upload-preview-remove"
+                          onClick={() => handleRemoveFile(index)}
+                          aria-label={`Remove ${file.name}`}
+                        >
+                          ✕
+                        </button>
+                        <img
+                          src={url}
+                          alt={file.name}
+                          className="gallery-img upload-preview-img"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
       </div>
     </div>
