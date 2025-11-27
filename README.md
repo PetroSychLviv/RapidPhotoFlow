@@ -15,7 +15,7 @@ Minimal photo upload → processing → review workflow built for a hackathon.
 - **Node.js**: 18+ (LTS recommended)
 - **npm**: comes with Node.js
 
-### Quickstart (recommended for new users)
+### Quickstart
 
 From your terminal:
 
