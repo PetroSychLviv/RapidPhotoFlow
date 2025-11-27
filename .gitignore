@@ -8,6 +8,7 @@ backend/uploads/
 
 # Backend data files
 backend/data/photos.json
+backend/data/workflow-log.json
 
 # Backend build output
 backend/dist/
