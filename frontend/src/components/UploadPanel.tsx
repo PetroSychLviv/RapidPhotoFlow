@@ -21,7 +21,17 @@ export function UploadPanel({
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
-    setSelectedFiles(files);
+    if (!files.length) return;
+
+    setSelectedFiles((prev) => {
+      const existingKeys = new Set(
+        prev.map((file) => `${file.name}-${file.lastModified}`)
+      );
+      const nextFiles = files.filter(
+        (file) => !existingKeys.has(`${file.name}-${file.lastModified}`)
+      );
+      return [...prev, ...nextFiles];
+    });
   }
 
   function openFilePicker() {
@@ -38,7 +48,16 @@ export function UploadPanel({
     );
 
     if (!droppedFiles.length) return;
-    setSelectedFiles(droppedFiles);
+
+    setSelectedFiles((prev) => {
+      const existingKeys = new Set(
+        prev.map((file) => `${file.name}-${file.lastModified}`)
+      );
+      const nextFiles = droppedFiles.filter(
+        (file) => !existingKeys.has(`${file.name}-${file.lastModified}`)
+      );
+      return [...prev, ...nextFiles];
+    });
   }
 
   function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
