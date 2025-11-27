@@ -93,9 +93,6 @@ export function QueuePanel({
                     <td>
                       <div className="queue-row-main">
                         <span className="queue-name">{photo.originalName}</span>
-                        <span className="queue-meta text-xs">
-                          id: {photo.id.slice(0, 8)}…
-                        </span>
                       </div>
                     </td>
                     <td>

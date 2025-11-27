@@ -556,12 +556,30 @@ body {
 .queue-table-scroll {
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden; /* avoid horizontal scrollbar; truncate long cells instead */
 }
 
 .queue-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.8rem;
+  table-layout: fixed; /* stable layout; non-name columns get fixed widths */
+}
+
+/* Compact, fixed widths for non-name columns so the name uses remaining space */
+.queue-table th:nth-child(2),
+.queue-table td:nth-child(2) {
+  width: 135px; /* Status */
+}
+
+.queue-table th:nth-child(3),
+.queue-table td:nth-child(3) {
+  width: 75px; /* Created */
+}
+
+.queue-table th:nth-child(4),
+.queue-table td:nth-child(4) {
+  width: 100px; /* Actions */
 }
 
 .queue-table thead {
@@ -624,6 +642,11 @@ body {
 .queue-name {
   font-weight: 500;
   color: #e5e7eb;
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .queue-meta {
