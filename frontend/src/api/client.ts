@@ -1,6 +1,9 @@
 import type { Photo } from "../types";
 
-export const API_BASE = "http://localhost:4000";
+// Prefer Vite-provided env variable, with a sensible localhost default for dev
+export const API_BASE =
+  (import.meta as { env?: { VITE_API_BASE?: string } }).env?.VITE_API_BASE ||
+  "http://localhost:4000";
 
 export async function uploadPhotos(files: File[]): Promise<Photo[]> {
   const formData = new FormData();
