@@ -46,7 +46,7 @@ export function QueuePanel({
   const hasItems = photos.length > 0;
 
   return (
-    <div>
+    <div className="queue-panel">
       <div className="panel-title">Processing Queue</div>
       <div className="panel-subtitle">
         Watch items flow from Uploaded → Processing → Ready, in near real-time.
@@ -65,59 +65,63 @@ export function QueuePanel({
         </button>
       </div>
 
-      <table className="queue-table scroll-sm">
-        <thead>
-          <tr>
-            <th>Photo</th>
-            <th>Status</th>
-            <th>Created</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
-          {!hasItems && (
-            <tr>
-              <td colSpan={4} className="queue-empty">
-                Queue is empty — upload photos to start the workflow.
-              </td>
-            </tr>
-          )}
-
-          {photos.map((photo) => {
-            const created = new Date(photo.createdAt).toLocaleTimeString();
-
-            return (
-              <tr key={photo.id}>
-                <td>
-                  <div className="queue-row-main">
-                    <span className="queue-name">{photo.originalName}</span>
-                    <span className="queue-meta text-xs">
-                      id: {photo.id.slice(0, 8)}…
-                    </span>
-                  </div>
-                </td>
-                <td>
-                  <StatusPill status={photo.status} />
-                </td>
-                <td>
-                  <span className="text-xs text-muted">{created}</span>
-                </td>
-                <td>
-                  <div className="queue-controls">
-                    <button
-                      type="button"
-                      className="btn btn-ghost btn-small"
-                      onClick={() => onSelectPhotoLogs(photo)}
-                    >
-                      View log
-                    </button>
-                  </div>
-                </td>
+      <div className="queue-table-shell">
+        <div className="queue-table-scroll scroll-sm">
+          <table className="queue-table">
+            <thead>
+              <tr>
+                <th>Photo</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th />
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {!hasItems && (
+                <tr>
+                  <td colSpan={4} className="queue-empty">
+                    Queue is empty — upload photos to start the workflow.
+                  </td>
+                </tr>
+              )}
+
+              {photos.map((photo) => {
+                const created = new Date(photo.createdAt).toLocaleTimeString();
+
+                return (
+                  <tr key={photo.id}>
+                    <td>
+                      <div className="queue-row-main">
+                        <span className="queue-name">{photo.originalName}</span>
+                        <span className="queue-meta text-xs">
+                          id: {photo.id.slice(0, 8)}…
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      <StatusPill status={photo.status} />
+                    </td>
+                    <td>
+                      <span className="text-xs text-muted">{created}</span>
+                    </td>
+                    <td>
+                      <div className="queue-controls">
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-small"
+                          onClick={() => onSelectPhotoLogs(photo)}
+                        >
+                          View log
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }

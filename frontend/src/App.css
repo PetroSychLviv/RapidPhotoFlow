@@ -426,18 +426,48 @@ body {
   color: #6b7280;
 }
 
+.queue-table-shell {
+  border-radius: 0.9rem;
+  border: 1px solid rgba(31, 41, 55, 0.9);
+  background: rgba(15, 23, 42, 0.6);
+  overflow: hidden;
+}
+
+.queue-table-scroll {
+  height: 100%;
+  overflow-y: auto;
+}
+
 .queue-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.8rem;
-  border-radius: 0.9rem;
-  overflow: hidden;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(31, 41, 55, 0.9);
 }
 
 .queue-table thead {
   background: rgba(15, 23, 42, 0.9);
+}
+
+.queue-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.queue-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.queue-panel .queue-table-shell {
+  flex: 1;
+  display: flex;
+}
+
+.queue-panel .queue-table-scroll {
+  flex: 1;
 }
 
 .queue-table th,
