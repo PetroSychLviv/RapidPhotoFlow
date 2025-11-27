@@ -10,7 +10,32 @@ Minimal photo upload → processing → review workflow built for a hackathon.
   - JSON file as a tiny “database” (`backend/data/photos.json`, auto-created)
   - Uploaded image files on disk (`backend/uploads/`)
 
-### Running the backend
+### Prerequisites
+
+- **Node.js**: 18+ (LTS recommended)
+- **npm**: comes with Node.js
+
+### Quickstart (recommended for new users)
+
+From your terminal:
+
+```bash
+git clone https://github.com/PetroSychLviv/RapidPhotoFlow.git
+cd RapidPhotoFlow
+
+# Install all dependencies (root + backend + frontend)
+npm run install:all
+
+# Start backend and frontend together
+npm run dev
+```
+
+- Backend will run at `http://localhost:4000`
+- Frontend (Vite dev server) will run at `http://localhost:5173` (default)
+
+You can now open the frontend URL in your browser and start using the app.
+
+### Running the backend only
 
 ```bash
 cd backend
@@ -29,7 +54,7 @@ A background job simulates processing by moving photos:
 
 `uploaded → processing → processed | failed` with log entries.
 
-### Running the frontend
+### Running the frontend only
 
 ```bash
 cd frontend
