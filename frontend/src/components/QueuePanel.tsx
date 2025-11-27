@@ -35,11 +35,9 @@ export function QueuePanel({
   }
 
   useEffect(() => {
-    // Initial load
-    refresh();
-    // Polling
-    const id = setInterval(refresh, 2500);
-    return () => clearInterval(id);
+    // Initial load; ongoing updates are pushed from the backend via
+    // the realtime channel in App.tsx.
+    void refresh();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -54,7 +52,7 @@ export function QueuePanel({
 
       <div style={{ marginBottom: "0.75rem" }} className="flex justify-between">
         <span className="badge-soft">
-          {isLoading ? "Syncing…" : "Auto-refresh: 2.5s"}
+          {isLoading ? "Syncing…" : "Auto-refresh: realtime"}
         </span>
         <button
           type="button"

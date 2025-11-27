@@ -12,6 +12,7 @@ import {
   getLogs,
   getPhotos,
 } from "./api/client";
+import { io } from "socket.io-client";
 
 type TabKey = "upload" | "queue" | "review";
 const TAB_STORAGE_KEY = "rapidPhotoFlow.activeTab";
@@ -98,24 +99,35 @@ export function App() {
     }
 
     // Initial load on mount
-    refreshFromServer();
-    loadLogsFromServer();
+    void refreshFromServer();
+    void loadLogsFromServer();
 
-    const source = new EventSource(`${API_BASE}/events`);
-    source.onmessage = () => {
-      // Whenever backend sends an event (upload or status change),
-      // refresh the photo list so Review tab stays up to date.
-      refreshFromServer();
-    };
-    source.onerror = () => {
+    const socket = io(`${API_BASE}/events`, {
+      transports: ["websocket"],
+    });
+
+    socket.on("event", () => {
+      if (!cancelled) {
+        void refreshFromServer();
+      }
+    });
+
+    socket.on("disconnect", () => {
       if (!cancelled) {
         pushLogLine("Realtime channel disconnected.");
       }
-    };
+    });
+
+    socket.on("connect_error", () => {
+      if (!cancelled) {
+        pushLogLine("Realtime channel connection error.");
+      }
+    });
 
     return () => {
       cancelled = true;
-      source.close();
+      socket.removeAllListeners();
+      socket.disconnect();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -4,8 +4,8 @@ Minimal photo upload → processing → review workflow built for a hackathon.
 
 ### Stack
 
-- **Frontend**: React + TypeScript + Vite (`frontend/`)
-- **Backend**: Node.js + TypeScript + Express (`backend/`)
+- **Frontend**: React + TypeScript + Vite + `socket.io-client` (`frontend/`)
+- **Backend**: Node.js + TypeScript + NestJS + Socket.IO (`backend/`)
 - **Storage**:
   - JSON file as a tiny “database” (`backend/data/photos.json`, auto-created)
   - Uploaded image files on disk (`backend/uploads/`)
@@ -71,7 +71,7 @@ update `API_BASE` in `frontend/src/api/client.ts`.
   - Select multiple image files and upload them.
   - Files are queued with `status = uploaded`.
 - **Queue** tab
-  - Polls the backend every 2.5s to show current statuses.
+  - Shows current statuses and updates automatically when the backend pushes events over Socket.IO (plus manual refresh).
   - Lets you inspect a per-photo event log.
 - **Review** tab
   - Displays a responsive gallery of successfully processed photos.

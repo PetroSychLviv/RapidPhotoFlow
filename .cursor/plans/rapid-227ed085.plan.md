@@ -9,7 +9,7 @@
 - Backend: Node.js + TypeScript + NestJS in `backend/` (using modules, controllers, and providers).
 - "Database": JSON file(s) on disk in `backend/data/`.
 - File storage for uploaded photos: `backend/uploads/`.
-- Communication: REST API (JSON) + multipart uploads.
+- Communication: REST API (JSON) + multipart uploads + realtime updates via Socket.IO.
 - **Concrete steps**:
 
 1. Inspect existing `frontend` and `backend` folders to see what’s already there.
@@ -164,15 +164,15 @@
 
 3. On success, clear selection and maybe notify user; optionally update local gallery state.
 
-### 10. Processing Queue Screen (Statuses + Auto-Refresh)
+### 10. Processing Queue Screen (Statuses + Realtime Auto-Refresh)
 
-- **Goal**: Show live-ish status of photos and their logs.
+- **Goal**: Show live status of photos and their logs, driven by backend events over Socket.IO.
 - **Concrete steps**:
 
 1. Create `QueuePanel` component:
 
 - Fetch list of photos from `GET /api/photos`.
-- Poll every few seconds with `setInterval` or `useEffect` cleanup.
+- Subscribe to realtime events over Socket.IO and refresh data when events are received (with optional manual refresh as a fallback).
 - Display table/list of photos with:
 - Filename / id
 - Status badge (color-coded)
@@ -240,7 +240,7 @@
 ### 15. Optional Stretch Goals
 
 - **Ideas**:
-- Add WebSocket or Server-Sent Events for real-time status updates (instead of polling).
+- Extend the existing Socket.IO integration with richer event payloads or per-photo channels.
 - Add filter and search controls in queue and review views.
 - Add per-photo manual "Reprocess" or "Force Fail" buttons.
 - Add simple theming (dark/light mode toggle).
@@ -271,9 +271,7 @@ You can walk through the plan with prompts like these (one per phase or sub-phas
 ### To-dos
 
 - [ ] Inspect existing `frontend` and `backend` folders to understand current setup and decide on migration vs. recreation.
--- [ ] Set up Node.js + TypeScript backend in `backend/` with NestJS, tsconfig, and dev/build/start scripts.
 - [ ] Implement file-based JSON store and `Photo` model with log support in backend.
--- [ ] Create upload and photo listing REST endpoints using NestJS controllers and `multer`, plus static file serving.
 - [ ] Add background processing job to simulate async workflow and update photo statuses with logs.
 - [ ] Convert existing React frontend to TypeScript with proper tsconfig and type fixes.
 - [ ] Implement Upload, Queue, and Review screens with a simple modern layout in React.
