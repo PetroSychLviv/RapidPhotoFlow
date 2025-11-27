@@ -6,17 +6,17 @@
 - **Goal**: Have a clear, simple structure and tooling before coding.
 - **Decisions**:
 - Frontend: React + TypeScript + Vite in `frontend/`.
-- Backend: Node.js + TypeScript + Express (or similar) in `backend/`.
+- Backend: Node.js + TypeScript + NestJS in `backend/` (using modules, controllers, and providers).
 - "Database": JSON file(s) on disk in `backend/data/`.
 - File storage for uploaded photos: `backend/uploads/`.
 - Communication: REST API (JSON) + multipart uploads.
 - **Concrete steps**:
 
 1. Inspect existing `frontend` and `backend` folders to see what’s already there.
-2. If needed, initialize backend: `npm init -y` and add TypeScript+Express in `backend`.
+2. If needed, initialize backend: `npm init -y` and add TypeScript + NestJS in `backend`.
 3. Ensure root README explains how to run both apps.
 
-### 2. Backend Setup (Node + TypeScript)
+### 2. Backend Setup (NestJS + TypeScript)
 
 - **Goal**: Type-safe backend that can compile and run with `ts-node` or `tsc`.
 - **Concrete steps**:
@@ -24,16 +24,16 @@
 1. In `backend/`, add:
 
 - `package.json` (if missing) with scripts: `dev`, `build`, `start`.
-- Dependencies: `express`, `multer` (for file uploads), `cors`.
+- Dependencies: `@nestjs/common`, `@nestjs/core`, `@nestjs/platform-express`, `multer` (for file uploads), and any other NestJS modules you need.
 - Dev deps: `typescript`, `ts-node-dev` or `nodemon`, `@types/node`, `@types/express`, `@types/multer`.
 
 2. Add `tsconfig.json` targeting Node LTS, outDir `dist`, rootDir `src`.
-3. Create minimal server entry: [`backend/src/server.ts`](backend/src/server.ts):
+3. Create NestJS entrypoint: [`backend/src/main.ts`](backend/src/main.ts) and root module [`backend/src/app.module.ts`](backend/src/app.module.ts):
 
-- Set up Express app, JSON body parsing, CORS.
-- Health-check route `GET /health`.
+- Use `NestFactory` to bootstrap the app, enable JSON body parsing and CORS, and (optionally) serve static `/uploads` files.
+- Add a simple health-check endpoint (e.g. `GET /health`) via a controller registered in `AppModule`.
 
-4. Add `npm run dev` to run server in watch mode.
+4. Add `npm run dev` to run the NestJS server in watch mode.
 
 ### 3. File-Based "Database" Layer
 
@@ -85,9 +85,9 @@
 - Allow manual status updates if needed for debugging.
 - **Concrete steps**:
 
-1. Set up router in [`backend/src/routes/photos.ts`](backend/src/routes/photos.ts) with Express.
-2. Wire router in `server.ts` under `/api/photos`.
-3. Configure `multer` for disk storage in `uploads/`.
+1. Implement `PhotosController` in [`backend/src/photos.controller.ts`](backend/src/photos.controller.ts) with NestJS decorators (e.g. `@Controller('api/photos')`, `@Post`, `@Get`).
+2. Register `PhotosController` in `AppModule` so NestJS exposes it under `/api/photos`.
+3. Configure `multer` disk storage via Nest's `FilesInterceptor` to write files into `uploads/`.
 4. Ensure responses include enough info for frontend to display thumbnails (e.g. a `/uploads/:filename` static route).
 
 ### 5. Processing Simulation & Event-Driven Workflow
@@ -114,7 +114,7 @@
 - **Goal**: Let frontend load images by URL.
 - **Concrete steps**:
 
-1. In `server.ts`, serve `uploads/` statically: `app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')))` (adjust path for `dist`).
+1. In `main.ts`, use the underlying Express instance to serve `uploads/` statically (e.g. `instance.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')))`), adjusting the path for `dist`.
 2. Include `imageUrl` or similar computed URL in API responses, or have frontend construct `/uploads/${filename}` from returned `filename`.
 
 ### 7. Frontend TypeScript Setup (React + Vite)
@@ -252,11 +252,11 @@
 You can walk through the plan with prompts like these (one per phase or sub-phase):
 
 - **Backend setup**:
-- "In the `backend` folder, set up a Node.js + TypeScript + Express server with `src/server.ts`, `tsconfig.json`, and dev/build/start scripts. Use CORS and add a `GET /health` route."
+- "In the `backend` folder, set up a Node.js + TypeScript + NestJS application with `src/main.ts`, `src/app.module.ts`, `tsconfig.json`, and dev/build/start scripts. Enable CORS and add a `GET /health` route in a controller."
 - **File database**:
 - "Create a `Photo` type and a file-based store in `backend/src/data/photoStore.ts` using a JSON file `backend/data/photos.json` with functions to create, update, and list photos, including an event log array per photo."
 - **Upload API**:
-- "Add Express routes in `backend/src/routes/photos.ts` to handle multipart uploads (`POST /api/photos`), list all photos (`GET /api/photos`), and serve uploaded files from `/uploads`. Use `multer` to save files and update the JSON store."
+- "Add a NestJS `PhotosController` in `backend/src/photos.controller.ts` to handle multipart uploads (`POST /api/photos`), list all photos (`GET /api/photos`), and integrate with the JSON store. Use Nest's `FilesInterceptor`/`multer` to save files and expose image URLs (e.g. via `/uploads`)."
 - **Processing job**:
 - "Implement a processing simulation service in `backend/src/services/processingService.ts` that periodically (every 2 seconds) moves photos from `uploaded` → `processing` → `processed` or `failed`, updating statuses and appending log entries, and wire it into `server.ts` with `setInterval`."
 - **Frontend TS migration**:
@@ -271,9 +271,9 @@ You can walk through the plan with prompts like these (one per phase or sub-phas
 ### To-dos
 
 - [ ] Inspect existing `frontend` and `backend` folders to understand current setup and decide on migration vs. recreation.
-- [ ] Set up Node.js + TypeScript backend in `backend/` with Express, tsconfig, and dev/build/start scripts.
+-- [ ] Set up Node.js + TypeScript backend in `backend/` with NestJS, tsconfig, and dev/build/start scripts.
 - [ ] Implement file-based JSON store and `Photo` model with log support in backend.
-- [ ] Create upload and photo listing REST endpoints using Express and multer, plus static file serving.
+-- [ ] Create upload and photo listing REST endpoints using NestJS controllers and `multer`, plus static file serving.
 - [ ] Add background processing job to simulate async workflow and update photo statuses with logs.
 - [ ] Convert existing React frontend to TypeScript with proper tsconfig and type fixes.
 - [ ] Implement Upload, Queue, and Review screens with a simple modern layout in React.
