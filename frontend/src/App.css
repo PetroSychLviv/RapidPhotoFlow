@@ -426,6 +426,7 @@ body {
 
 .file-list-header {
   display: flex;
+  gap: 0.75rem; /* match row spacing so columns line up */
   padding: 0.25rem 0;
   margin-bottom: 0.25rem;
   border-bottom: 1px solid rgba(31, 41, 55, 0.9);
@@ -447,15 +448,14 @@ body {
 
 .file-col-size {
   width: 80px;
-  text-align: right;
+  text-align: left;
   flex-shrink: 0;
 }
 
 .file-col-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start; /* align header label and row buttons to the left */
   flex-shrink: 0;
-  margin-left: auto;
 }
 
 .file-item {
