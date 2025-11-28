@@ -2,6 +2,8 @@
 
 Minimal photo upload → processing → review workflow built for a hackathon.
 
+Loom - https://www.loom.com/share/71aa55391d194d99b7ce9ba5e1466f83
+
 ### Stack
 
 - **Frontend**: React + TypeScript + Vite + `socket.io-client` (`frontend/`)
